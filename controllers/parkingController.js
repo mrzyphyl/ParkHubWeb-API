@@ -63,6 +63,37 @@ const postParking = asyncHandler (async (req, res) => {
     }
 })
 
+// Parking Not Active
+// @route PUT /api/parking/deactivated/:id
+// @access Public
+const cancelStatus = asyncHandler(async (req, res) => {
+    const parking = await Parking.findById(req.params.id);
+
+    if (!parking) {
+        res.status(404).json({ message: 'Parking not found' })
+    } else {
+        parking.isActive = false;
+        const updatedParking = await parking.save()
+        res.status(200).json(updatedParking)
+    }
+})
+
+// Cancel Parking
+// @route PUT /api/parking/cancel/:id
+// @access Public
+const cancelParking = asyncHandler(async (req, res) => {
+    const parking = await Parking.findById(req.params.id);
+
+    if (!parking) {
+        res.status(404).json({ message: 'Parking not found' })
+    } else {
+        // Set the `isCanceled` field to true and save the document
+        parking.isCanceled = true;
+        const updatedParking = await parking.save()
+        res.status(200).json(updatedParking)
+    }
+})
+
 //Update Parking Data
 //@route PUT /api/parking/:id
 //@access Public
