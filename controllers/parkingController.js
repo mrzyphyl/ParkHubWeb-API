@@ -153,4 +153,6 @@ module.exports = {
     updateParking,
     deltParking,
     deltMultiParking,
+    cancelStatus,
+    cancelParking
 }
