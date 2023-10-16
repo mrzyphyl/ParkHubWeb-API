@@ -9,6 +9,12 @@ const parkingSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    total_hours: {
+        type: String,
+    },
+    total_amount: {
+        type: String,
+    },
     isActive: {
         type: Boolean,
         default: null,

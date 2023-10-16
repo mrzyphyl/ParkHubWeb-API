@@ -63,6 +63,50 @@ const postParking = asyncHandler (async (req, res) => {
     }
 })
 
+// Update Parking Data
+// @route PUT /api/parking/compute/:id
+// @access Public
+const computeRate = asyncHandler(async (req, res) => {
+    const { total_hours } = req.body
+    const parkingId = req.params.id
+
+    try {
+        const parking = await Parking.findById(parkingId)
+
+        if (!parking) {
+            res.status(404);
+            throw new Error('Parking not found')
+        }
+
+        if (total_hours) {
+            // Parse the total_hours to convert from HH:MM:SS format to hours
+            const timeComponents = total_hours.split(':')
+            const hours = parseInt(timeComponents[0])
+            const minutes = parseInt(timeComponents[1])
+            const seconds = parseInt(timeComponents[2])
+
+            const totalHours = hours + minutes / 60 + seconds / 3600;
+
+            // Compute the total_amount based on the rate (20 pesos per hour)
+            parking.total_hours = totalHours.toFixed(2)
+            parking.total_amount = (totalHours * 20).toFixed(2)
+        }
+
+        const updatedParking = await parking.save()
+
+        res.json({
+            _id: updatedParking.id,
+            customer: updatedParking.customer,
+            total_amount: updatedParking.total_amount,
+            total_hours: updatedParking.total_hours,
+            isActive: updatedParking.isActive,
+            isCanceled: updatedParking.isCanceled
+        });
+    } catch (error) {
+        res.status(400).json({ error: error.message })
+    }
+})
+
 // Parking Not Active
 // @route PUT /api/parking/deactivated/:id
 // @access Public
@@ -154,5 +198,6 @@ module.exports = {
     deltParking,
     deltMultiParking,
     cancelStatus,
-    cancelParking
+    cancelParking,
+    computeRate
 }
